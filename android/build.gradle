@@ -1,0 +1,49 @@
+plugins {
+  // ...
+
+  // Add the dependency for the Google services Gradle plugin
+  id "com.google.gms.google-services" version "4.5.0" apply false
+}
+
+buildscript {
+    ext.kotlin_version = '2.2.20'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+// subprojects {
+//     project.evaluationDependsOn(':app')
+// }
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+
+subprojects { subproject ->
+    subproject.pluginManager.withPlugin('com.android.library') {
+        if (!subproject.android.hasProperty('namespace') || subproject.android.namespace == null) {
+            subproject.android.namespace = subproject.group
+        }
+    }
+    subproject.pluginManager.withPlugin('com.android.application') {
+        if (!subproject.android.hasProperty('namespace') || subproject.android.namespace == null) {
+            subproject.android.namespace = subproject.group
+        }
+    }
+}
