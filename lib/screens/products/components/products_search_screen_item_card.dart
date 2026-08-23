@@ -58,19 +58,23 @@ class ProductSearchScreenItemCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: width,
-              height: getProportionateScreenHeight(95),
-              decoration: BoxDecoration(
-                color: color.withOpacity(.3),
-                borderRadius: BorderRadius.circular(15),
-                // border kPrimary COlor
-
-                image: DecorationImage(
-                  image: CachedNetworkImageProvider(
-                    productImage,
-                  ),
-                  fit: BoxFit.cover,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: CachedNetworkImage(
+                imageUrl: productImage,
+                width: width,
+                height: getProportionateScreenHeight(95),
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  width: width,
+                  height: getProportionateScreenHeight(95),
+                  color: color.withOpacity(.3),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  width: width,
+                  height: getProportionateScreenHeight(95),
+                  color: color.withOpacity(.3),
+                  child: const Icon(Icons.image_not_supported_outlined, color: Colors.grey),
                 ),
               ),
             ),
@@ -88,12 +92,16 @@ class ProductSearchScreenItemCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  productName,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Text(
+                    productName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],

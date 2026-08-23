@@ -55,7 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void getToken() async {
     try {
-      await FirebaseMessaging.instance.getToken().then(
+      await FirebaseMessaging.instance.getToken(
+        vapidKey: 'BEY-v0Iv3zVfpxJaiVeVv9enUOuAh4FvL_5_FZztI1CG0BdsOudSYYJSM0paHlyRqnDRNflssDBs3tp5A2imaWo',
+      ).then(
         (token) {
           if (token != null) {
             setState(() {
@@ -99,7 +101,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       // Retrieve Firebase Messaging token
       final FirebaseMessaging messaging = FirebaseMessaging.instance;
-      final String? token = await messaging.getToken();
+      final String? token = await messaging.getToken(
+        vapidKey: 'BEY-v0Iv3zVfpxJaiVeVv9enUOuAh4FvL_5_FZztI1CG0BdsOudSYYJSM0paHlyRqnDRNflssDBs3tp5A2imaWo',
+      );
       log('Firebase Messaging Token: $token');
 
       // Assign the token to mtoken
@@ -160,18 +164,6 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.white,
       body: const Body(),
       bottomNavigationBar: const CustomBottomNavBar(selectedMenu: MenuState.home),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const SupportChat(),
-            ),
-          );
-        },
-        backgroundColor: kPrimaryColor,
-        child: const Icon(Icons.support_agent),
-      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '/resources/services/firebase/firestore_methods.dart';
@@ -14,6 +15,9 @@ class ProfileProvider with ChangeNotifier {
 
   final TextEditingController _passwordController = TextEditingController();
   TextEditingController get passwordController => _passwordController;
+
+  final TextEditingController _currentPasswordController = TextEditingController();
+  TextEditingController get currentPasswordController => _currentPasswordController;
 
   final TextEditingController _numberController = TextEditingController();
   TextEditingController get numberController => _numberController;
@@ -125,9 +129,32 @@ class ProfileProvider with ChangeNotifier {
     }
 
     setLoading(true);
+    String currentPassword = currentPasswordController.text;
     String password = passwordController.text;
 
+    if (currentPassword.isEmpty) {
+      setLoading(false);
+      throw Exception('Current password cannot be empty');
+    }
+
+    if (password.isEmpty) {
+      setLoading(false);
+      throw Exception('New password cannot be empty');
+    }
+
     try {
+      final user = auth.FirebaseAuth.instance.currentUser;
+      if (user != null && user.email != null) {
+        // Re-authenticate user before changing password
+        auth.AuthCredential credential = auth.EmailAuthProvider.credential(
+          email: user.email!,
+          password: currentPassword,
+        );
+        await user.reauthenticateWithCredential(credential);
+        
+        await user.updatePassword(password);
+      }
+
       await usersCollection.doc(userId).set({
         'password': password.hashCode.toString(),
       }, SetOptions(merge: true));
@@ -145,6 +172,7 @@ class ProfileProvider with ChangeNotifier {
     _emailController.dispose();
     _numberController.dispose();
     _passwordController.dispose();
+    _currentPasswordController.dispose();
     _genderController.dispose();
     super.dispose();
   }

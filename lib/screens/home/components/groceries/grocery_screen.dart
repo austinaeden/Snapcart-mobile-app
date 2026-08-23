@@ -39,7 +39,7 @@ class Grocery extends StatelessWidget {
             ),
             image: DecorationImage(
               image: NetworkImage(
-                  'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/groceries%2Fbasket.jpg?alt=media&token=9a1980f7-785d-426f-86cb-f979423399a2'),
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQn7cBIcXOH_VWgK-BQAo-v_wu8vb752FX0zQ4xufrBbxVXCCDd7M6VHuw&s=10'),
               fit: BoxFit.cover,
             ),
           ),
@@ -72,7 +72,7 @@ class Grocery extends StatelessWidget {
                       ),
                       image: const DecorationImage(
                         image: NetworkImage(
-                            'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/groceries%2Fvegies.jpg?alt=media&token=121849e2-b96f-464a-ae9f-ffc5f10681d9'),
+                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlh_LhSr0mP_1nXVNVBvHgvLWa_tB2FftQupbxfVIiSNQd1N62WmZ8-Zw&s=10'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -91,7 +91,7 @@ class Grocery extends StatelessWidget {
                       ),
                       image: const DecorationImage(
                         image: NetworkImage(
-                            'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/groceries%2Fbill.jpg?alt=media&token=84cf10bc-68a6-454d-8bc6-8d853f378205'),
+                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFoyo5ASeQqZ_Y3yDzgd3s2u3F6fI3DgxQl1z85IaIwCbMerGl-c_S6LI&s=10'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -115,7 +115,7 @@ class Grocery extends StatelessWidget {
                       ),
                       image: const DecorationImage(
                         image: NetworkImage(
-                            'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/groceries%2Fshop_girl.jpg?alt=media&token=b3f4ee5f-694a-4733-8729-ee460127f608'),
+                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqOVTeeNExs4p4sA0FY6p4WvlwUoKSHdZndy6K6JEhkyFx9q0vz-QiiRA&s=10'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -134,7 +134,7 @@ class Grocery extends StatelessWidget {
                       ),
                       image: const DecorationImage(
                         image: NetworkImage(
-                            'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/groceries%2Fgrains2.jpg?alt=media&token=3acfa0d3-4b56-4a2d-adb5-d5c5d1aa68d3'),
+                            'https://cdn.shopify.com/s/files/1/2303/2711/files/Fashion_Photography_for_E-Commerce_How_to_Capture_Your_Model_and_Clothing_in_the_Best_Light_2.jpg?v=1684706557'),
                         fit: BoxFit.cover,
                       ),
                     ),

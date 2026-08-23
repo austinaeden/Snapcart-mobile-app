@@ -43,17 +43,22 @@ class HelpCenterScreen extends StatelessWidget {
         children: [
           Container(
             height: 200,
+            width: double.infinity,
             margin: const EdgeInsets.only(
               top: 10,
               bottom: 20,
               left: 20,
               right: 20,
             ),
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    'https://img.freepik.com/free-vector/flat-design-illustration-customer-support_23-2148887720.jpg'),
-                fit: BoxFit.cover,
+            decoration: BoxDecoration(
+              color: kPrimaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.support_agent,
+                size: 80,
+                color: kPrimaryColor,
               ),
             ),
           ),
@@ -87,7 +92,7 @@ class HelpCenterScreen extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              '+91 9649477393',
+              '+254 719 892 432',
               style: TextStyle(
                 fontSize: 12,
               ),
@@ -123,71 +128,13 @@ class HelpCenterScreen extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              'gitaman8481@gmail.com',
+              'austinaeden@gmail.com',
               style: TextStyle(
                 fontSize: 12,
               ),
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const SupportChat(),
-            ),
-          );
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            vertical: getProportionateScreenWidth(15),
-            horizontal: getProportionateScreenWidth(5),
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            ),
-            boxShadow: [
-              BoxShadow(
-                offset: const Offset(0, -15),
-                blurRadius: 20,
-                color: const Color(0xFFDADADA).withOpacity(0.15),
-              )
-            ],
-          ),
-          child: ListTile(
-            leading: Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                color: kPrimaryColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Center(
-                child: FaIcon(
-                  FontAwesomeIcons.facebookMessenger,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            title: const Text(
-              'Contact Live Chat',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            subtitle: const Text(
-              'We are ready to answer you',
-              style: TextStyle(fontSize: 12),
-            ),
-            trailing: const Icon(Icons.arrow_forward_ios_rounded),
-          ),
-        ),
       ),
     );
   }

@@ -18,6 +18,16 @@ class ShowMore extends StatefulWidget {
 class _ShowMoreState extends State<ShowMore> {
   final CollectionReference _refProducts =
       FirebaseFirestore.instance.collection('products');
+  late Future<List<Product>> _productsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _productsFuture = fetchProductsFromFirestore(
+        widget.keyword == "Popular Products"
+            ? "Popular Products"
+            : widget.keyword);
+  }
 
   Future<List<Product>> fetchProductsFromFirestore(String category) async {
     final List<Product> products = [];
@@ -68,10 +78,7 @@ class _ShowMoreState extends State<ShowMore> {
             height: getProportionateScreenHeight(
                 MediaQuery.of(context).size.height * .85),
             child: FutureBuilder<List<Product>>(
-              future: fetchProductsFromFirestore(
-                  widget.keyword == "Popular Products"
-                      ? "Popular Products"
-                      : widget.keyword),
+              future: _productsFuture,
               builder: (context, snapshot) {
                 final List<Product> products = snapshot.data ?? [];
 

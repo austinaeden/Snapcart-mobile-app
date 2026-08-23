@@ -321,42 +321,50 @@ class OrderItemDetailScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          minimumSize: const Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        onPressed: () async {
-                          final confirm = await showDialog<bool>(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                              title: const Text('Delete Order?'),
-                              content: const Text('Are you sure you want to permanently delete this order?'),
-                              actions: [
-                                TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                                TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete', style: TextStyle(color: Colors.red))),
-                              ],
+                    if (order.orderStatus != 'Cancled') ...[
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            minimumSize: const Size(double.infinity, 50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          );
-                          if (confirm == true) {
-                            final q = await FirebaseFirestore.instance.collection('orders').where('orderId', isEqualTo: order.orderId).get();
-                            for (var doc in q.docs) {
-                              await doc.reference.delete();
+                          ),
+                          onPressed: () async {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                title: const Text('Cancel Order?'),
+                                content: const Text('Are you sure you want to cancel this order?'),
+                                actions: [
+                                  TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('No')),
+                                  TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Cancel Order', style: TextStyle(color: Colors.red))),
+                                ],
+                              ),
+                            );
+                            if (confirm == true) {
+                              final q = await FirebaseFirestore.instance.collection('orders').where('orderId', isEqualTo: order.orderId).get();
+                              for (var doc in q.docs) {
+                                final data = doc.data();
+                                data['orderStatus'] = 'Cancled';
+                                await FirebaseFirestore.instance.collection('cancelledOrders').add({
+                                  ...data,
+                                  'cancelledAt': Timestamp.now(),
+                                });
+                                await doc.reference.delete();
+                              }
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                              }
                             }
-                            if (context.mounted) {
-                              Navigator.of(context).pop();
-                            }
-                          }
-                        },
-                        child: const Text('Delete Order', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                          },
+                          child: const Text('Cancel Order', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
+                      const SizedBox(width: 10),
+                    ],
                     Expanded(
                       child: DefaultButton(
                         text: 'Go Back',

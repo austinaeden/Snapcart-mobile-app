@@ -37,7 +37,7 @@ class FeaturesSection extends StatelessWidget {
                       ),
                       image: const DecorationImage(
                         image: CachedNetworkImageProvider(
-                            'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/features%2F4.jpg?alt=media&token=5c5a4bbe-4620-4c16-ae8a-7716093e8d12'),
+                            'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=320&fit=crop'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -53,7 +53,7 @@ class FeaturesSection extends StatelessWidget {
                       ),
                       image: const DecorationImage(
                         image: CachedNetworkImageProvider(
-                            'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/features%2F1.jpg?alt=media&token=d5a36a22-b213-49ca-9a86-9295f51ff610'),
+                            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=320&fit=crop'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -74,7 +74,7 @@ class FeaturesSection extends StatelessWidget {
                       ),
                       image: const DecorationImage(
                         image: CachedNetworkImageProvider(
-                            'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/features%2Fsneak_pink.jpg?alt=media&token=761b4fdb-2427-4fce-96af-bda7b64db36c'),
+                            'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400&h=320&fit=crop'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -90,7 +90,7 @@ class FeaturesSection extends StatelessWidget {
                       ),
                       image: const DecorationImage(
                         image: CachedNetworkImageProvider(
-                            'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/features%2Fsneakers.jpg?alt=media&token=5a3fc818-f941-49c0-83e3-34dce3714b17'),
+                            'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=320&fit=crop'),
                         fit: BoxFit.cover,
                       ),
                     ),

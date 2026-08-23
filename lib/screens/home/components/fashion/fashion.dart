@@ -65,7 +65,7 @@ class _FashionState extends State<Fashion> {
             ),
             image: DecorationImage(
               image: NetworkImage(
-                  'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/features%2FImage%20Banner%203.png?alt=media&token=efa74f88-8091-445b-847c-639b5a0b2fc2'),
+                  'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=320&fit=crop'),
               fit: BoxFit.cover,
             ),
           ),

@@ -39,20 +39,27 @@ class ProductGridTileItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 140,
-              width: 170,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: CachedNetworkImageProvider(
-                    product.images.isNotEmpty
-                        ? product.images.first
-                        : 'https://picsum.photos/250?image=9',
-                  ),
-                  fit: BoxFit.cover,
+            ClipRRect(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(16),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: product.images.isNotEmpty
+                    ? product.images.first
+                    : 'https://picsum.photos/250?image=9',
+                height: 140,
+                width: 170,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  width: 170,
+                  height: 140,
+                  color: Colors.grey.withOpacity(.3),
                 ),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(16),
+                errorWidget: (context, url, error) => Container(
+                  width: 170,
+                  height: 140,
+                  color: Colors.grey.withOpacity(.3),
+                  child: const Icon(Icons.image_not_supported_outlined, color: Colors.grey),
                 ),
               ),
             ),

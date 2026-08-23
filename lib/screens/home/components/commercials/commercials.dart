@@ -16,7 +16,7 @@ class Commercials extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: const NetworkImage(
-                      'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/features%2Fsneakers.jpg?alt=media&token=5a3fc818-f941-49c0-83e3-34dce3714b17'),
+                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ9V1ayDS267rGs60p77kj6mMEEiN-ng3liyOLM8fRN-RCndzix4VeN4_Z&s=10'),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(
                     Colors.black.withOpacity(0.3),
@@ -97,7 +97,7 @@ class Commercials extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: const NetworkImage(
-                      'https://firebasestorage.googleapis.com/v0/b/tokoto-ecommerce-app.appspot.com/o/features%2Fsneak_pink.jpg?alt=media&token=761b4fdb-2427-4fce-96af-bda7b64db36c'),
+                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUCO5lnvxbyjzQ3MwK_4fkEVGzz9bsLqpKJ0MBJrTnWQ&s=10'),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(
                     Colors.black.withOpacity(0.3),

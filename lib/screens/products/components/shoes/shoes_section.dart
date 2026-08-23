@@ -19,6 +19,13 @@ class ShoesSection extends StatefulWidget {
 class _ShoesSectionState extends State<ShoesSection> {
   final CollectionReference _refProducts =
       FirebaseFirestore.instance.collection('products');
+  late Future<List<Product>> _productsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _productsFuture = fetchProductsFromFirestore();
+  }
 
   Future<List<Product>> fetchProductsFromFirestore() async {
     final List<Product> products = [];
@@ -56,7 +63,7 @@ class _ShoesSectionState extends State<ShoesSection> {
         SizedBox(
           height: 190,
           child: FutureBuilder<List<Product>>(
-            future: fetchProductsFromFirestore(),
+            future: _productsFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return SizedBox(

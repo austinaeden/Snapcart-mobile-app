@@ -185,41 +185,86 @@ class MyAccount extends StatelessWidget {
                                               ),
                                         ),
                                       ),
-                                      content: TextFormField(
-                                        obscureText: true,
-                                        decoration: InputDecoration(
-                                          hintStyle: const TextStyle(fontSize: 14),
-                                          hintText: "Enter new password",
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(50),
-                                            borderSide: const BorderSide(
-                                              color: Colors.orange,
-                                              width: 1.0,
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          TextFormField(
+                                            controller: profileProvider.currentPasswordController,
+                                            obscureText: true,
+                                            decoration: InputDecoration(
+                                              hintStyle: const TextStyle(fontSize: 14),
+                                              hintText: "Enter current password",
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(50),
+                                                borderSide: const BorderSide(
+                                                  color: Colors.orange,
+                                                  width: 1.0,
+                                                ),
+                                              ),
+                                              contentPadding: const EdgeInsets.symmetric(
+                                                vertical: 2,
+                                                horizontal: 16,
+                                              ),
+                                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                                              suffixIcon: const CustomSurffixIcon(
+                                                svgIcon: "assets/icons/Lock.svg",
+                                              ),
                                             ),
                                           ),
-                                          contentPadding: const EdgeInsets.symmetric(
-                                            vertical: 2,
-                                            horizontal: 16,
+                                          const SizedBox(height: 15),
+                                          TextFormField(
+                                            controller: profileProvider.passwordController,
+                                            obscureText: true,
+                                            decoration: InputDecoration(
+                                              hintStyle: const TextStyle(fontSize: 14),
+                                              hintText: "Enter new password",
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(50),
+                                                borderSide: const BorderSide(
+                                                  color: Colors.orange,
+                                                  width: 1.0,
+                                                ),
+                                              ),
+                                              contentPadding: const EdgeInsets.symmetric(
+                                                vertical: 2,
+                                                horizontal: 16,
+                                              ),
+                                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                                              suffixIcon: const CustomSurffixIcon(
+                                                svgIcon: "assets/icons/Lock.svg",
+                                              ),
+                                            ),
                                           ),
-                                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                                          suffixIcon: const CustomSurffixIcon(
-                                            svgIcon: "assets/icons/Lock.svg",
-                                          ),
-                                        ),
-                                        onChanged: (String newPassword) => profileProvider.updatePassword(
-                                          authProvider.user.uid,
-                                        ),
+                                        ],
                                       ),
                                       actions: [
                                         TextButton(
                                           onPressed: () {
+                                            profileProvider.currentPasswordController.clear();
+                                            profileProvider.passwordController.clear();
                                             Navigator.pop(context);
                                           },
                                           child: const Text('Cancel'),
                                         ),
                                         TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
+                                          onPressed: () async {
+                                            try {
+                                              await profileProvider.updatePassword(authProvider.user.uid);
+                                              profileProvider.currentPasswordController.clear();
+                                              profileProvider.passwordController.clear();
+                                              if (context.mounted) {
+                                                Navigator.pop(context);
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  const SnackBar(content: Text('Password changed successfully')),
+                                                );
+                                              }
+                                            } catch (e) {
+                                              if (context.mounted) {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
+                                                );
+                                              }
+                                            }
                                           },
                                           child: const Text('Change'),
                                         ),

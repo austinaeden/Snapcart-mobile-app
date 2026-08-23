@@ -51,7 +51,9 @@ class PushNotificationsManager {
 
   static final PushNotificationsManager _instance = PushNotificationsManager._();
 
-  FutureOr<String?> get token async => FirebaseMessaging.instance.getToken();
+  FutureOr<String?> get token async => FirebaseMessaging.instance.getToken(
+        vapidKey: 'BEY-v0Iv3zVfpxJaiVeVv9enUOuAh4FvL_5_FZztI1CG0BdsOudSYYJSM0paHlyRqnDRNflssDBs3tp5A2imaWo',
+      );
 
   void subscribeToChatRoom(String chatRoomId) {
     FirebaseMessaging.instance.subscribeToTopic(chatRoomId);
