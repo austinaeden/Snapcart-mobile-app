@@ -160,7 +160,7 @@ class _AfterBuyNowButtonSheetState extends State<AfterBuyNowButtonSheet> {
                   left: 18,
                   top: 23,
                   right: 18,
-                  bottom: 23,
+                  bottom: 63,
                 ),
                 decoration: BoxDecoration(
                   color: Colors.black,

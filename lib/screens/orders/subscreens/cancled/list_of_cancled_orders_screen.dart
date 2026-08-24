@@ -122,14 +122,37 @@ class _ListOfCancledOrdersScreenState extends State<ListOfCancledOrdersScreen> {
                               return Text('Error: ${snapshot.error}');
                             }
                             final productName = snapshot.data;
-                            return OrderWidget(
-                              productImage: orderData['productImage'] ??
-                                  'https://www.getillustrations.com/packs/gradient-marker-vector-illustrations/scenes/_1x/e-commerce%20_%20online,%20shopping,%20buy,%20purchase,%20empty,%20cart,%20order_md.png',
-                              orderId: orderData['productId'],
-                              productName: productName ?? 'Cart Order',
-                              quantity: orderData['quantity'],
-                              orderPrice: orderData['amount'].toString(),
-                              orderDate: orderData['orderedDate'],
+                            return Dismissible(
+                              key: Key(orderDocuments[index].id),
+                              direction: DismissDirection.endToStart,
+                              onDismissed: (_) async {
+                                await FirebaseFirestore.instance
+                                    .collection('cancelledOrders')
+                                    .doc(orderDocuments[index].id)
+                                    .delete();
+                              },
+                              background: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFFFE6E6),
+                                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                                ),
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Icon(Icons.delete, color: Colors.red),
+                                  ],
+                                ),
+                              ),
+                              child: OrderWidget(
+                                productImage: orderData['productImage'] ??
+                                    'https://www.getillustrations.com/packs/gradient-marker-vector-illustrations/scenes/_1x/e-commerce%20_%20online,%20shopping,%20buy,%20purchase,%20empty,%20cart,%20order_md.png',
+                                orderId: orderData['productId'],
+                                productName: productName ?? 'Cart Order',
+                                quantity: orderData['quantity'],
+                                orderPrice: orderData['amount'].toString(),
+                                orderDate: orderData['orderedDate'],
+                              ),
                             );
                           },
                         );

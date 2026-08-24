@@ -128,25 +128,48 @@ class _ListOfDeliveredOrdersScreenState extends State<ListOfDeliveredOrdersScree
                         log('-------------');
                         log(orderData.toString());
                         log('-------------');
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => OrderItemDetailScreen(
-                                  order: models.Order.fromMap(orderData),
-                                ),
-                              ),
-                            );
+                        return Dismissible(
+                          key: Key(orderDocuments[index].id),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (_) async {
+                            await FirebaseFirestore.instance
+                                .collection('orders')
+                                .doc(orderDocuments[index].id)
+                                .delete();
                           },
-                          child: OrderWidget(
-                            productImage: orderData['productImage'] ??
-                                'https://www.getillustrations.com/packs/gradient-marker-vector-illustrations/scenes/_1x/e-commerce%20_%20online,%20shopping,%20buy,%20purchase,%20empty,%20cart,%20order_md.png',
-                            orderId: orderData['orderId'],
-                            productName: productName ?? 'Cart Order',
-                            quantity: orderData['quantity'],
-                            orderPrice: orderData['amount'].toString(),
-                            orderDate: orderData['orderedDate'],
+                          background: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFFE6E6),
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Icon(Icons.delete, color: Colors.red),
+                              ],
+                            ),
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => OrderItemDetailScreen(
+                                    order: models.Order.fromMap(orderData),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: OrderWidget(
+                              productImage: orderData['productImage'] ??
+                                  'https://www.getillustrations.com/packs/gradient-marker-vector-illustrations/scenes/_1x/e-commerce%20_%20online,%20shopping,%20buy,%20purchase,%20empty,%20cart,%20order_md.png',
+                              orderId: orderData['orderId'],
+                              productName: productName ?? 'Cart Order',
+                              quantity: orderData['quantity'],
+                              orderPrice: orderData['amount'].toString(),
+                              orderDate: orderData['orderedDate'],
+                            ),
                           ),
                         );
                       },

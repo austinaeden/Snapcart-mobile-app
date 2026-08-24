@@ -131,82 +131,87 @@ class OrderItemDetailScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Text(
-                                  "Order Name: ",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Text(
+                                    "Order Name: ",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                                FutureBuilder<String>(
-                                  future: getProductNameById(order.productId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      return Text(
-                                        snapshot.data!,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black,
-                                            decorationThickness: 1.5,
-                                            decoration:
-                                                TextDecoration.underline,
-                                            decorationColor: kPrimaryColor,
-                                            fontWeight: FontWeight.w600),
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      log('Failed to retrieve product name: ${snapshot.error}');
-                                    }
-                                    return const SizedBox();
-                                  },
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Text(
-                                  'Order Date: ',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                                  Expanded(
+                                    child: FutureBuilder<String>(
+                                      future: getProductNameById(order.productId),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          return Text(
+                                            snapshot.data!,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                                decorationThickness: 1.5,
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                decorationColor: kPrimaryColor,
+                                                fontWeight: FontWeight.w600),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          log('Failed to retrieve product name: ${snapshot.error}');
+                                        }
+                                        return const SizedBox();
+                                      },
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  order.orderedDate.split(' ')[0],
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal,
-                                    color: kTextColor,
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  const Text(
+                                    'Order Date: ',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Text(
-                                  'Quantity:',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    order.orderedDate.split(' ')[0],
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal,
+                                      color: kTextColor,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "${order.quantity}",
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal,
-                                    color: kTextColor,
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  const Text(
+                                    'Quantity:',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "${order.quantity}",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal,
+                                      color: kTextColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -25,6 +26,7 @@ class CheckoutCard extends StatelessWidget {
     final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
     final OrderProvider orderProvider = Provider.of<OrderProvider>(context, listen: false);
     final ProductProvider productProvider = Provider.of<ProductProvider>(context, listen: false);
+    final CartProvider cartProvider = Provider.of<CartProvider>(context, listen: false);
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -76,73 +78,88 @@ class CheckoutCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: getProportionateScreenHeight(20)),
-            Consumer<CartProvider>(
-              builder: (context, cartProvider, _) {
-                return FutureBuilder<double>(
-                    future: cartProvider.totalPriceFunc(authProvider.user.uid),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        // Loading state code
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(authProvider.user.uid)
+                  .collection('cartItems')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: SizedBox(
+                      height: getProportionateScreenHeight(50),
+                      width: MediaQuery.of(context).size.width * .9,
+                      child: ShimmerBox(
+                        child: SizedBox(
+                          height: getProportionateScreenHeight(50),
+                          width: getProportionateScreenWidth(100),
+                        ),
+                      ),
+                    ),
+                  );
+                }
 
-                        return Center(
-                          child: SizedBox(
-                            height: getProportionateScreenHeight(120),
-                            width: MediaQuery.of(context).size.width * .9,
-                            child: ShimmerBox(
-                              child: SizedBox(
-                                height: getProportionateScreenHeight(100),
-                                width: getProportionateScreenWidth(100),
-                              ),
-                            ),
-                          ),
-                        );
-                      }
+                if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading cart'));
+                }
 
-                      if (snapshot.hasError) {
-                        // Error state code
-                        return const Center(child: Text('Error fetching quantity'));
-                      }
+                final docs = snapshot.data?.docs ?? [];
+                double streamTotalPrice = 0.0;
+                List<Product> streamCartItems = [];
+                
+                final seen = <String>{};
+                for (final doc in docs) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  final id = data['id']?.toString() ?? doc.id;
+                  if (seen.add(id)) {
+                    final item = Product.fromMap(data);
+                    streamTotalPrice += item.price * item.quantity;
+                    streamCartItems.add(item);
+                  }
+                }
 
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        text: "Total:\n",
                         children: [
-                          Text.rich(
-                            TextSpan(
-                              text: "Total:\n",
-                              children: [
-                                TextSpan(
-                                  text: "₹ ${snapshot.data ?? 0.0}",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: kPrimaryColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: getProportionateScreenWidth(190),
-                            child: DefaultButton(
-                              btnColor: kPrimaryColor,
-                              txtColor: Colors.white,
-                              text: "Check Out",
-                              press: cartProvider.cartItems.isNotEmpty
-                                  ? () {
-                                      showPaymentDialog(
-                                        context,
-                                        authProvider.user.uid,
-                                        orderProvider,
-                                        productProvider,
-                                        cartProvider,
-                                      );
-                                    }
-                                  : () {},
+                          TextSpan(
+                            text: "₹ $streamTotalPrice",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: kPrimaryColor,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
-                      );
-                    });
+                      ),
+                    ),
+                    SizedBox(
+                      width: getProportionateScreenWidth(190),
+                      child: DefaultButton(
+                        btnColor: kPrimaryColor,
+                        txtColor: Colors.white,
+                        text: "Check Out",
+                        press: streamCartItems.isNotEmpty
+                            ? () {
+                                showPaymentDialog(
+                                  context,
+                                  authProvider.user.uid,
+                                  orderProvider,
+                                  productProvider,
+                                  cartProvider,
+                                  streamCartItems,
+                                  streamTotalPrice,
+                                );
+                              }
+                            : () {},
+                      ),
+                    ),
+                  ],
+                );
               },
             ),
           ],
@@ -185,6 +202,8 @@ class CheckoutCard extends StatelessWidget {
     OrderProvider orderProvider,
     ProductProvider productProvider,
     CartProvider cartProvider,
+    List<Product> cartItems,
+    double totalPrice,
   ) async {
     bool success = false;
     String orderStatus = 'Processing';
@@ -197,7 +216,20 @@ class CheckoutCard extends StatelessWidget {
     String orderId = generateOrderId();
 
     AddressProvider addressProvider = Provider.of<AddressProvider>(context, listen: false);
-    List<Product> cartItems = cartProvider.cartItems;
+    final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    // Validate phone number before proceeding
+    final userNumber = authProvider.user.number;
+    if (userNumber == null || userNumber.trim().isEmpty) {
+      Get.snackbar(
+        'Missing Phone Number',
+        'Please add a phone number to your profile before placing an order.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
 
     log('---------------');
     log('ORDER_ID = $orderId');
@@ -205,17 +237,15 @@ class CheckoutCard extends StatelessWidget {
     log('USER_ID = $userId');
     log('---------------');
 
-    double totalPrice = 0.0;
     List<Map<String, dynamic>> orderItems = [];
 
-    // Create order items and calculate total price
+    // Calculate orderItems
     for (int i = 0; i < cartItems.length; i++) {
       Product cartItem = cartItems[i];
       String productId = cartItems[i].id;
       String productImage = cartItems[i].images.isNotEmpty ? cartItems[i].images.first : '';
       int quantity = cartItem.quantity > 0 ? cartItem.quantity : 1;
       double price = double.tryParse(cartItems[i].price.toString()) ?? 0.0;
-      totalPrice += price * quantity;
 
       Map<String, dynamic> orderItem = {
         'productId': productId,
@@ -232,20 +262,29 @@ class CheckoutCard extends StatelessWidget {
     log('TOTAL_PRICE = $totalPrice');
     log('---------------');
 
-    Order order = Order(
-      orderId: orderId,
-      size: productProvider.selectedSize,
-      color: productProvider.selectedColor.value.toRadixString(16).padLeft(8, '0').toString(),
-      addressProvider.selectedAddress.phone,
-      address: '${addressProvider.selectedAddress.address} ${addressProvider.selectedAddress.pincode}',
-      orderedDate: DateTime.now().toString(),
-      uid: userId,
-      orderStatus: orderStatus,
-      amount: totalPrice,
-      productId: 'cart_order_${generateOrderId().substring(0, 8)}',
-      productImage: (cartItems.isNotEmpty && cartItems.first.images.isNotEmpty) ? cartItems.first.images.first : '',
-      quantity: cartItems.length,
-    );
+    List<Order> generatedOrders = [];
+    for (int i = 0; i < cartItems.length; i++) {
+      Product cartItem = cartItems[i];
+      int quantity = cartItem.quantity > 0 ? cartItem.quantity : 1;
+      double price = double.tryParse(cartItem.price.toString()) ?? 0.0;
+      // Each item gets its own unique order ID
+      final itemOrderId = const Uuid().v4();
+
+      generatedOrders.add(Order(
+        orderId: itemOrderId,
+        size: productProvider.selectedSize,
+        color: productProvider.selectedColor.value.toRadixString(16).padLeft(8, '0').toString(),
+        addressProvider.selectedAddress.phone,
+        address: '${addressProvider.selectedAddress.address} ${addressProvider.selectedAddress.pincode}',
+        orderedDate: DateTime.now().toString(),
+        uid: userId,
+        orderStatus: orderStatus,
+        amount: price * quantity,
+        productId: cartItem.id,
+        productImage: cartItem.images.isNotEmpty ? cartItem.images.first : '',
+        quantity: quantity,
+      ));
+    }
 
     try {
       await showDialog(
@@ -270,19 +309,25 @@ class CheckoutCard extends StatelessWidget {
                 GestureDetector(
                   onTap: () async {
                     try {
-                      log('---------------');
-                      log(order.toString());
-                      log('---------------');
-                      await orderProvider.addOrder(
-                        orderData: order.toMap(),
-                        uid: userId,
-                      );
+                      for (final order in generatedOrders) {
+                        log('---------------');
+                        log('Adding order for product: ${order.productId}');
+                        log('---------------');
+                        await orderProvider.addOrder(
+                          orderData: order.toMap(),
+                          uid: userId,
+                        );
+                      }
+                      
+                      // Clear cart in backend and UI
+                      cartProvider.clearCartItems(userId);
+                      
                       success = true;
                       showNotification(
                         'Order Placed Successfully ✔🎉',
                         'Your order is placed successfully',
                         BigTextStyleInformation(
-                          'Your order of ${order.amount} is placed, \n estimated delivery in next 2 hours.',
+                          'Your order of ₹$totalPrice is placed, \n estimated delivery in next 2 hours.',
                           htmlFormatBigText: true,
                           contentTitle: 'Order Placed Successfully ✔🎉',
                         ),
@@ -319,39 +364,7 @@ class CheckoutCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Get.snackbar(
-                      'Information ℹ',
-                      'This functionality is yet to be implemented! 🙏',
-                      backgroundColor: Colors.yellow,
-                      colorText: Colors.black,
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: getProportionateScreenHeight(50),
-                    margin: const EdgeInsets.only(
-                      top: 15,
-                      left: 15,
-                      right: 15,
-                    ),
-                    decoration: BoxDecoration(
-                      color: kPrimaryColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Online Payment',
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                              fontSize: 14,
-                              color: Colors.white,
-                            ),
-                      ),
-                    ),
-                  ),
-                ),
+
                 GestureDetector(
                   onTap: () {
                     Navigator.pop(context);

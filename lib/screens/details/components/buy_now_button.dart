@@ -23,7 +23,7 @@ class BuyNowButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 15,
+      bottom: 95,
       left: 15,
       right: 15,
       child: Container(

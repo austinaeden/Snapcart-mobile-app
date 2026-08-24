@@ -42,44 +42,46 @@ class CartCard extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              cart.title,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                cart.title,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 2,
               ),
-              maxLines: 2,
-            ),
-            const SizedBox(height: 6),
-            Text.rich(
-              TextSpan(
-                text: "\$${cart.price}",
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: kPrimaryColor,
+              const SizedBox(height: 6),
+              Text.rich(
+                TextSpan(
+                  text: "\$${cart.price}",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: kPrimaryColor,
+                      ),
+                  children: [
+                    TextSpan(
+                      text: " x",
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
-                children: [
-                  TextSpan(
-                    text: " x",
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  TextSpan(
-                    text: " $quantity",
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: kTextColor,
-                        ),
-                  ),
-                ],
+                    TextSpan(
+                      text: " $quantity",
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: kTextColor,
+                          ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const Spacer(),
         Row(

@@ -66,32 +66,19 @@ class OrderProvider with ChangeNotifier {
   }
 
   Future addOrder({
-    // required models.Order order,
     required Map<String, dynamic> orderData,
     required String uid,
   }) async {
     try {
-      // final orderData = order.toMap();
       if (orderData.isEmpty) {
-        throw Exception('Order data is null');
+        throw Exception('Order data is empty');
       }
 
       final ordersCollection = FirebaseFirestore.instance.collection('orders');
-      final orderDoc = ordersCollection.doc();
-
-      final orderSnapshot = await orderDoc.get();
-      if (!orderSnapshot.exists) {
-        final userOrderDoc = ordersCollection.doc();
-        await userOrderDoc.set(orderData);
-        log('Order added successfully ✨🎉🥳');
-        notifyListeners();
-        return orderDoc.id;
-      } else {
-        await orderDoc.set(orderData);
-        log('Existing order document updated');
-        notifyListeners();
-        return orderDoc.id;
-      }
+      final docRef = await ordersCollection.add(orderData);
+      log('Order added successfully ✨🎉🥳 | docId: ${docRef.id}');
+      notifyListeners();
+      return docRef.id;
     } catch (error) {
       log('Failed to add order: $error');
       throw Exception('Failed to add order: $error');

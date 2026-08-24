@@ -45,7 +45,8 @@ class Order {
       'amount': amount,
       'address': address,
       'orderStatus': orderStatus,
-      // 'paymentInfo': paymentInfo!.toMap(),
+      'size': size,
+      'color': color,
     };
   }
 

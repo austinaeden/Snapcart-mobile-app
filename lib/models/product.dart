@@ -74,6 +74,7 @@ class Product {
       isPopular: map['isPopular'] as bool? ?? false,
       colors: List<String>.from(map['colors'] ?? []),
       sizes: List<String>.from(map['sizes'] ?? []),
+      quantity: (map['quantity'] as num?)?.toInt() ?? 1,
     );
   }
 

@@ -193,7 +193,7 @@ class _CheckoutButtonAlertBoxState extends State<CheckoutButtonAlertBox> {
     AddressProvider addressProvider = Provider.of<AddressProvider>(context, listen: false);
     ProductProvider productProvider = Provider.of<ProductProvider>(context, listen: false);
 
-    bool success = false;
+    bool? success;
     String orderStatus = 'Processing';
 
     String? orderId;
@@ -333,60 +333,6 @@ class _CheckoutButtonAlertBoxState extends State<CheckoutButtonAlertBox> {
                   ),
                 ),
 
-                //* ONLINE PAYMENT
-                GestureDetector(
-                  onTap: () async {
-                    try {
-                      // ! 1 -> Initialize Stripe
-                      initStripe();
-
-                      //! 2 -> create the payment method
-                      final paymentMethod = await Stripe.instance.createPaymentMethod(
-                        params: PaymentMethodParams.card(paymentMethodData: PaymentMethodData()),
-                      );
-
-                      //! 3 -> Use paymentMethod.id to create a PaymentIntent on your server
-
-                      //! 4 -> Handle server response and update UI accordingly
-
-                      //? If not implemented
-                      Get.snackbar(
-                        'Information ℹ',
-                        'This functionality is yet to be implemented! 🙏',
-                        backgroundColor: Colors.yellow,
-                        colorText: Colors.black,
-                        snackPosition: SnackPosition.BOTTOM,
-                      );
-                    } catch (error) {
-                      success = false;
-                      // log('Error occurred while payment: $error');
-                    }
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: getProportionateScreenHeight(50),
-                    margin: const EdgeInsets.only(
-                      top: 15,
-                      left: 15,
-                      right: 15,
-                    ),
-                    decoration: BoxDecoration(
-                      color: kPrimaryColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Online Payment',
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                      ),
-                    ),
-                  ),
-                ),
-
                 //* GO TO CART
                 GestureDetector(
                   onTap: () {
@@ -460,7 +406,7 @@ class _CheckoutButtonAlertBoxState extends State<CheckoutButtonAlertBox> {
       // log('Error occurred while adding the order: $e');
     }
 
-    if (success) {
+    if (success == true) {
       Get.snackbar(
         'Success',
         'Order added successfully! 🎉',
@@ -473,28 +419,17 @@ class _CheckoutButtonAlertBoxState extends State<CheckoutButtonAlertBox> {
         MaterialPageRoute(
           builder: (context) => const HomeScreen(),
         ),
-        (route) => false, // Remove all existing routes from the stack
+        (route) => false,
       );
-
-      // log('---------------');
-      // log('USER_ID = $userId');
-      // log('---------------');
-      // log('PRICE = ${widget.price.toString()}');
-      // log('---------------');
-      // log('QUANTITY = ${quantity.toString()}');
-      // log('---------------');
-      // log('ORDER STATUS = $orderStatus');
-      // log('---------------');
-      // log('ORDER ID = $orderId');
-      // log('---------------');
-    } else {
+    } else if (success == false) {
       Get.snackbar(
         'Error',
-        'Failed to add order or process. Please try again! 😕',
+        'Failed to place order. Please try again! 😕',
         backgroundColor: Colors.red,
         snackPosition: SnackPosition.BOTTOM,
         colorText: Colors.white,
       );
     }
+    // success == null means user cancelled — do nothing
   }
 }

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../components/custom_bottom_nav_bar.dart';
 import '../../utils/constants.dart';
@@ -81,15 +82,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await FirebaseFirestore.instance.collection('users').doc(uid).set({'token': token}, SetOptions(merge: true));
 
-    showLocalNotification(
-      '',
-      '',
-      const BigTextStyleInformation(
-        'Welcome to SnapCart',
-        htmlFormatBigText: true,
-        contentTitle: 'SnapCart',
-      ),
-    );
+    // Only show the welcome notification once per device
+    final prefs = await SharedPreferences.getInstance();
+    final alreadyShown = prefs.getBool('welcome_shown') ?? false;
+    if (!alreadyShown) {
+      await prefs.setBool('welcome_shown', true);
+      showLocalNotification(
+        '',
+        '',
+        const BigTextStyleInformation(
+          'Welcome to SnapCart',
+          htmlFormatBigText: true,
+          contentTitle: 'SnapCart',
+        ),
+      );
+    }
   }
 
   void initInfo() async {
